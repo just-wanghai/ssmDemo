@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 启动自动扫描 -->
+	<context:component-scan base-package="cn.smbms.controller"></context:component-scan>
+
+	<bean id="cs"
+		class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean id="cs" class="cn.smbms.util.StringToDateConverter">
+					<constructor-arg value="yyyy-MM-dd"></constructor-arg>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+    <!-- 启用MVC注解驱动 -->
+	<mvc:annotation-driven conversion-service="cs">
+		<mvc:message-converters>
+			<!-- 设置字符集编码 -->  
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<value>application/json;charset=utf-8</value>
+				</property>
+			</bean>
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=utf-8</value>
+						<value>text/html;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="features">
+					<value>WriteDateUseDateFormat</value>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 配置Spring MVC的视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 访问JSP页面时,可理解为在控制器controller的返回值加前缀和后缀,变成一个可用的URL地址 -->
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>				
+
+	<!-- 配置静态文件访问 -->
+	<!-- 对静态资源文件的访问,因为Spring MVC会拦截所有请求,导致jsp页面中对js和CSS的引用也被拦截,
+	               配置后可以把对资源的请求交给项目的  默认拦截器而不是Spring MVC-->
+	<mvc:resources location="/statics/" mapping="/statics/**"></mvc:resources>
+
+	<!-- 配置全局异常处理 -->
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.RuntimeException">error</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 配置拦截器 interceptor-->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/sys/**" />
+			<bean class="cn.smbms.interceptor.SysInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>
