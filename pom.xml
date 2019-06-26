@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<!--1111111 -->
+	<!--222 -->
 	<properties>
 		<!-- jdk版本号 -->
 		<jdk.version>1.8</jdk.version>
