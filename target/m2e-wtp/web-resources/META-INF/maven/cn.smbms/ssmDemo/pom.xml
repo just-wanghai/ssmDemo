@@ -13,7 +13,7 @@
 		<!-- jdk版本号 -->
 		<jdk.version>1.8</jdk.version>
 		<!-- spring版本号 -->
-		<spring.version>4.3.14.RELEASE</spring.version>
+		<spring.version>5.2.20.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
